@@ -56,7 +56,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "drf_spectacular",
     'django_celery_beat',
-
+    "corsheaders",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
