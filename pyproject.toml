@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "habit-tracker"
+version = "0.1.0"
+description = "Этот проект направлен на разработку системы управления привычками, которая позволяет пользователям эффективно создавать, отслеживать и делиться своими привычками."
+authors = ["Ilya Maksimovich <mexic2284@mail.ru>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+djangorestframework = "^3.16.0"
+psycopg2 = "^2.9.10"
+pillow = "^11.1.0"
+python-dotenv = "^1.1.0"
+django-phonenumber-field = "^8.0.0"
+django-filter = "^25.1"
+djangorestframework-simplejwt = "^5.5.0"
+ipython = "^9.0.2"
+drf-yasg = "^1.21.10"
+drf-spectacular = "^0.28.0"
+redis = "^5.2.1"
+celery = "^5.5.0"
+eventlet = "^0.39.1"
+django = ">=5.1,<5.2"
+django-celery-beat = "^2.7.0"
+
+
+[tool.poetry.group.lint.dependencies]
+flake8 = "^7.2.0"
+isort = "^6.0.1"
+mypy = "^1.15.0"
+black = "^25.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_return_any = true
+exclude = 'venv'
+python_version = "3.12"
+
+[tool.black]
+line-length = 79
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
+[tool.isort]
+line_length = 79
