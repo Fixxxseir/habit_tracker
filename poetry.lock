@@ -941,6 +941,18 @@ files = [
 ptyprocess = ">=0.5"
 
 [[package]]
+name = "phonenumbers"
+version = "9.0.2"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "phonenumbers-9.0.2-py2.py3-none-any.whl", hash = "sha256:dbcec6bdfdf3973f60b81dc0fcac3f7b1638f877ac42da4d7b46724ed413e2b9"},
+    {file = "phonenumbers-9.0.2.tar.gz", hash = "sha256:f590ee2b729bdd9873ca2d52989466add14c9953b48805c0aeb408348d4d6224"},
+]
+
+[[package]]
 name = "pillow"
 version = "11.1.0"
 description = "Python Imaging Library (Fork)"
@@ -1575,4 +1587,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "58c064cd70cbcadd7bab89238943b112e857a254f41e5ceea2851653ccf50e69"
+content-hash = "1df1dc986e37b94dcb72356408dad9ad093316a26a4cd046a8ae58ed20127b93"
