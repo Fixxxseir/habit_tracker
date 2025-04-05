@@ -45,7 +45,7 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     "users",
-    "tracker",
+    "habits",
 ]
 
 THIRD_PARTY_APPS = [

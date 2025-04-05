@@ -25,6 +25,7 @@ django = ">=5.1,<5.2"
 django-celery-beat = "^2.7.0"
 phonenumbers = "^9.0.2"
 django-cors-headers = "^4.7.0"
+loguru = "^0.7.3"
 
 
 [tool.poetry.group.lint.dependencies]
