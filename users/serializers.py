@@ -19,11 +19,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "phone_number",
             "avatar",
             "country",
-            "date_joined",
-        ]
-        read_only_fields = [
-            "id",
-            "date_joined",
+
         ]
 
     def create(self, validated_data):
