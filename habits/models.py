@@ -28,9 +28,9 @@ class Habit(models.Model):
         max_length=255,
         help_text="Введите действие")
     is_positive_habit = models.BooleanField(
-        verbose_name=_("Положительная привычка"),
+        verbose_name=_("Приятная привычка"),
         default=False,
-        help_text="Признак положительной привычки"
+        help_text="Признак приятной привычки"
     )
     associated_habit = models.ForeignKey(
         'self',
@@ -54,8 +54,8 @@ class Habit(models.Model):
         help_text="Введите вознаграждение"
     )
     time_to_complete = models.PositiveIntegerField(
-        verbose_name=_("Время выполнения"),
-        help_text="Введите время выполнения привычки"
+        verbose_name=_("Время выполнения в секундах"),
+        help_text="Введите время выполнения привычки в секундах"
     )
     is_published = models.BooleanField(
         verbose_name=_("Статус публичности"),
