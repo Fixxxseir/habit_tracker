@@ -92,6 +92,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+API_VERSION = "api/v1/"
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -177,8 +179,8 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "MindForge",
-    "DESCRIPTION": "BEST PROJECT",
+    "TITLE": "habit_tracker",
+    "DESCRIPTION": "Система управления привычками",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
@@ -187,6 +189,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:5173",
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:5173",
+]
+
 
 CACHE_ENABLED = True
 if CACHE_ENABLED:
