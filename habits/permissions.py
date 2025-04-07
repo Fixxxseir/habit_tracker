@@ -3,8 +3,9 @@ from rest_framework import permissions, status
 
 class IsAdminOrIsStaff(permissions.BasePermission):
     """
-    Права доступа и admin и staff
+    Права доступа admin или staff
     """
+
     message = {
         "forbidden": "Доступ запрещен",
     }
@@ -18,6 +19,7 @@ class OwnerHabitPermission(permissions.BasePermission):
     """
     Права доступа только владельцу
     """
+
     message = {
         "forbidden": "Доступ запрещен",
     }
