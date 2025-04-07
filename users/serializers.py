@@ -6,6 +6,9 @@ User = get_user_model()
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор создания и изменения пользователя
+    """
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -19,20 +22,19 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "phone_number",
             "avatar",
             "country",
-
         ]
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
+        password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
         user.save()
 
         refresh = RefreshToken.for_user(user)
         return {
-            'user': {
-                'username': user.username,
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+            "user": {
+                "username": user.username,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
             }
         }
