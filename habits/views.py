@@ -1,6 +1,7 @@
 from django.db.models import Q
-from loguru import logger
-from rest_framework import viewsets, permissions
+
+from rest_framework import permissions, viewsets
+
 from habits import models, serializers
 from habits.permissions import IsAdminOrIsStaff, OwnerHabitPermission
 
@@ -9,36 +10,42 @@ class HabitViewSet(viewsets.ModelViewSet):
     """
     Вьюсет привычки
     """
+
     lookup_field = "pk"
     lookup_url_kwarg = "habit_id"
 
     def get_queryset(self):
         user = self.request.user
         if user.is_staff or user.is_superuser:
-            return models.Habit.objects.all()
+            return models.Habit.objects.all().order_by("-id")
         return models.Habit.objects.filter(
             Q(user=user) | Q(is_published=True)
-        )
+        ).order_by("-id")
 
     def get_permissions(self):
-        if self.action == 'list':
-            permission_classes = [permissions.IsAuthenticated,
-                                  OwnerHabitPermission | IsAdminOrIsStaff]
-        elif self.action in ['retrieve', 'update', 'partial_update']:
-            permission_classes = [permissions.IsAuthenticated,
-                                  OwnerHabitPermission]
+        if self.action in ["list", "create"]:
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ["update", "partial_update", "retrieve"]:
+            permission_classes = [
+                permissions.IsAuthenticated,
+                OwnerHabitPermission,
+            ]
+        elif self.action == "destroy":
+            permission_classes = [
+                permissions.IsAuthenticated
+                & (IsAdminOrIsStaff | OwnerHabitPermission)
+            ]
         else:
-            permission_classes = [permissions.IsAuthenticated,
-                                  (OwnerHabitPermission | IsAdminOrIsStaff)]
+            permission_classes = [
+                permissions.IsAuthenticated & IsAdminOrIsStaff
+            ]
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         """
         Возвращает сериализатор в зависимости от действия.
         """
-        if self.action == 'retrieve':
-            return serializers.HabitSerializer
-        elif self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return serializers.HabitCreateSerializer
         return serializers.HabitSerializer
 
