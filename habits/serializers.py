@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
 from habits.models import Habit
-from habits.validators import AssociatedHabitOrRewardValidator, \
-    ExecutionTimeLimitValidator, PositiveHabitOnlyValidator, \
-    RelatedHabitValidator, FrequencyOfHabitValidator
+from habits.validators import (AssociatedHabitOrRewardValidator,
+                               ExecutionTimeLimitValidator,
+                               FrequencyOfHabitValidator,
+                               PositiveHabitOnlyValidator,
+                               RelatedHabitValidator)
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -26,13 +28,17 @@ class HabitSerializer(serializers.ModelSerializer):
             "time_to_complete",
             "is_published",
         )
-        read_only_fields = ("id", "user",)
+        read_only_fields = (
+            "id",
+            "user",
+        )
 
 
 class HabitCreateSerializer(serializers.ModelSerializer):
     """
-    Сериализатор соаздния
+    Сериализатор создания
     """
+
     class Meta:
         model = Habit
         fields = (
@@ -47,10 +53,11 @@ class HabitCreateSerializer(serializers.ModelSerializer):
             "is_published",
         )
         validators = [
-            AssociatedHabitOrRewardValidator('associated_habit', 'reward'),
-            ExecutionTimeLimitValidator('time_to_complete'),
-            RelatedHabitValidator('associated_habit'),
-            PositiveHabitOnlyValidator('is_positive_habit', 'reward', 'associated_habit'),
-            FrequencyOfHabitValidator('periodicity'),
+            AssociatedHabitOrRewardValidator("associated_habit", "reward"),
+            ExecutionTimeLimitValidator("time_to_complete"),
+            RelatedHabitValidator("associated_habit"),
+            PositiveHabitOnlyValidator(
+                "is_positive_habit", "reward", "associated_habit"
+            ),
+            FrequencyOfHabitValidator("periodicity"),
         ]
-
