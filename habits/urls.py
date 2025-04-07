@@ -9,8 +9,6 @@ app_name = HabitConfig.name
 
 router = routers.DefaultRouter()
 
-router.register(prefix=r'habit', viewset=views.HabitViewSet, basename="habit")
+router.register(prefix=r"habit", viewset=views.HabitViewSet, basename="habit")
 
-urlpatterns = [
-    path('', include(router.urls))
-]
+urlpatterns = [path("", include(router.urls))]
