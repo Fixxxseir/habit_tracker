@@ -18,7 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "tg_username",
-            "th_chat_id",
+            "tg_chat_id",
             "phone_number",
             "avatar",
             "country",
