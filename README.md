@@ -49,7 +49,10 @@ git clone --branch develop --single-branch https://github.com/Fixxxseir/habit_tr
 sudo ls
 cd habit_tracker
 ```
-- Установите: sudo apt-get install docker-compose
+- Установите:
+```
+sudo apt-get install docker-compose
+```
 3. Необходимо заполнить **.env.sample** и в последствии перемеиновать его в **.env**
 4. Создание образа:
 ```
