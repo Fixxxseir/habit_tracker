@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from habits.models import Habit
-from users.models import User
+
 
 User = get_user_model()
 
@@ -14,6 +14,7 @@ class HabitTestCase(TestCase):
     """
     Тесты endpoint, permissions, validators
     """
+
     def setUp(self):
         self.client = APIClient()
 

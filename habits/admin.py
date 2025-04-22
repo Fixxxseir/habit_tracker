@@ -8,6 +8,7 @@ class HabitAdmin(admin.ModelAdmin):
     """
     Регистрация модели в админ панели
     """
+
     list_display = (
         "id",
         "user",

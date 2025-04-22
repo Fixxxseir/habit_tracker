@@ -9,6 +9,7 @@ class UserManager(BaseUserManager):
     Менеджер модели
     Логика создания пользователя и суперюзера
     """
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Поле email должно быть заполнено")
@@ -34,6 +35,7 @@ class User(AbstractUser):
     """
     Модель представления привычки
     """
+
     username = models.CharField(
         max_length=255,
         null=True,

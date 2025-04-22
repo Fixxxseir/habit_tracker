@@ -82,7 +82,8 @@ class Migration(migrations.Migration):
                 (
                     "time_to_complete",
                     models.PositiveIntegerField(
-                        help_text="Введите время выполнения привычки в секундах",
+                        help_text="Введите время выполнения привычки в"
+                                  " секундах",
                         verbose_name="Время выполнения в секундах",
                     ),
                 ),
