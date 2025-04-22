@@ -1,0 +1,186 @@
+name: Django CI
+
+on: [ push, ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ПОЛУЧАЕМ КОД ИЗ РЕПОЗИТОРИЯ
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # УСТАНАВЛИВЕМ python нужной версии
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # УСТАНОВКА ЛИНТЕРА
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies (including flake8)
+        run: poetry install --no-root
+
+      - name: Run Flake8 via Poetry
+        run: poetry run flake8 .
+
+  test:
+    # СРЕДА ГДЕ БУДЕТ ВЫПОЛНЯТЬСЯ ЗАДАЧА
+    needs: lint
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: localhost
+      DB_PORT: 5432
+    steps:
+      # КЛОНИРОВАНИЕ РЕПОЗИТОРИЯ С ИСХОДНЫМ КОДОМ
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # УСТАНОВКА Python нужной версии
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # КЕШИРОВАНИЕ ЗАВИСИМОСТЕЙ(что бы ускорить процесс установки зависимостей)
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      # УСТАНОВКА Poetry и УСТАНОВКА ЗАВИСИМОСТЕЙ
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --no-root
+
+      # МИГРАЦИИ
+      - name: Run migrate
+        env:
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        run: |
+          poetry run python manage.py migrate
+
+      # ЗАПУСК ТЕСТОВ
+      - name: Run tests
+        env:
+          CELERY_BROKER_URL: redis://localhost:6379/0
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        run: poetry run python manage.py test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      # КЛОНИРУЕМ КОД ИЗ РЕПОЗИТОРИЯ
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # АВТОРИЗУЕМСЯ(аутентификация) В Docker Hub используя учетные данные из секретов
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      # Собираем Docker образ используя тег на основе крайнего коммита
+      - name: Build and push all images
+        run: |
+          # Основной образ
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+
+          # Образ Nginx
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp-nginx:${{ github.sha }} -f ./nginx/Dockerfile ./nginx/
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/myapp-nginx:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # ПОДКЛЮЧЕНИЕ К СЕРВЕРУ ЧЕРЕЗ SSH
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          cat << 'EOF' > .env
+          ${{ secrets.DOTENV }}
+          EOF
+        shell: bash
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      # Останавливаем старый контейнер если он есть, удаляем если он есть и запускаем новый контейнер с проксированием порта 80:8000
+      - name: Deploy to server
+        run: |
+          sed -i "s|build: .*/nginx|image: ${{ secrets.DOCKER_HUB_USERNAME }}/myapp-nginx:${{ github.sha }}|g" docker-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/MindForge/
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+            cd ~/MindForge && \
+            sudo docker system prune -af && \
+            sudo docker volume prune -f && \
+            sudo docker-compose -f docker-compose.yml down --remove-orphans && \
+            sudo docker-compose -f docker-compose.yml pull && \
+            sudo docker-compose -f docker-compose.yml up -d --build --force-recreate
+          "
+
+
+
+
+#      - name:eploy to Server
+#        run: |
+#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#            export SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}"
+#            sudo docker stop myapp || true
+#            sudo docker rm myapp || true
+#            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+#            sudo docker run -d --name myapp -p 80:8000 \
+#              -e SECRET_KEY="$SECRET_KEY" \
+#              -e DB_NAME="${{ secrets.DB_NAME }}" \
+#              -e DB_USER="${{ secrets.DB_USER }}" \
+#              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+#              -e DB_HOST="${{ secrets.DB_HOST }}" \
+#              -e DB_PORT="${{ secrets.DB_PORT }}" \
+#              ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+#            echo "Container status:"
+#            sudo docker ps -a | grep myapp
+#          EOF
