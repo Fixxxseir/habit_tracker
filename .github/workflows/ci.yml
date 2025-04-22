@@ -162,24 +162,3 @@ jobs:
             sudo docker-compose -f docker-compose.yml pull && \
             sudo docker-compose -f docker-compose.yml up -d --build --force-recreate
           "
-
-
-
-#      - name:eploy to Server
-#        run: |
-#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#            export SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}"
-#            sudo docker stop myapp || true
-#            sudo docker rm myapp || true
-#            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-#            sudo docker run -d --name myapp -p 80:8000 \
-#              -e SECRET_KEY="$SECRET_KEY" \
-#              -e DB_NAME="${{ secrets.DB_NAME }}" \
-#              -e DB_USER="${{ secrets.DB_USER }}" \
-#              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-#              -e DB_HOST="${{ secrets.DB_HOST }}" \
-#              -e DB_PORT="${{ secrets.DB_PORT }}" \
-#              ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-#            echo "Container status:"
-#            sudo docker ps -a | grep myapp
-#          EOF
