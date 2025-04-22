@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = ["130.193.45.162", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["158.160.161.47", "localhost", "127.0.0.1"]
 
 # Application definition
 
@@ -203,7 +203,7 @@ SPECTACULAR_SETTINGS = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:5173",
-    "http://130.193.45.162:8000",
+    "http://158.160.161.47:8000",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
