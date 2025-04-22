@@ -8,4 +8,5 @@ class UserAdmin(admin.ModelAdmin):
     """
     Регистрация модели в админ панели
     """
+
     list_display = ("id", "email", "username")

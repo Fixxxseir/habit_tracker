@@ -7,6 +7,7 @@ class Habit(models.Model):
     """
     Модель представления привычки
     """
+
     user = models.ForeignKey(
         get_user_model(),
         verbose_name=_("Пользователь"),

@@ -27,6 +27,8 @@ django-cors-headers = "^4.7.0"
 loguru = "^0.7.3"
 requests = "^2.32.3"
 redis = "5.0.0"
+gunicorn = "^23.0.0"
+yamllint = "^1.37.0"
 
 
 [tool.poetry.group.lint.dependencies]
