@@ -153,9 +153,9 @@ jobs:
       - name: Deploy to server
         run: |
           sed -i "s|build: .*/nginx|image: ${{ secrets.DOCKER_HUB_USERNAME }}/myapp-nginx:${{ github.sha }}|g" docker-compose.yml
-          scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/MindForge/
+          scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/habit_tracker/
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-            cd ~/MindForge && \
+            cd ~/habit_tracker && \
             sudo docker system prune -af && \
             sudo docker volume prune -f && \
             sudo docker-compose -f docker-compose.yml down --remove-orphans && \
