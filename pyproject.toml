@@ -18,11 +18,17 @@ djangorestframework-simplejwt = "^5.5.0"
 ipython = "^9.0.2"
 drf-yasg = "^1.21.10"
 drf-spectacular = "^0.28.0"
-redis = "^5.2.1"
 celery = "^5.5.0"
 eventlet = "^0.39.1"
 django = ">=5.1,<5.2"
 django-celery-beat = "^2.7.0"
+phonenumbers = "^9.0.2"
+django-cors-headers = "^4.7.0"
+loguru = "^0.7.3"
+requests = "^2.32.3"
+redis = "5.0.0"
+gunicorn = "^23.0.0"
+yamllint = "^1.37.0"
 
 
 [tool.poetry.group.lint.dependencies]
