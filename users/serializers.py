@@ -9,6 +9,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     """
     Сериализатор создания и изменения пользователя
     """
+
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
